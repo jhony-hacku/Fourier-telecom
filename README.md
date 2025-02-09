@@ -1,54 +1,49 @@
-# 📡 Análisis de Fourier en Redes y Telecomunicaciones
+# 📡 Fourier Analysis in Networking and Telecommunications
 
-## 📖 Descripción
-Este proyecto implementa **Análisis de Fourier** para la representación de señales en el contexto de **redes y telecomunicaciones**, basado en el libro *Redes de Computadoras - Tanenbaum (5ta Edición)*. A través de la **descomposición en series de Fourier**, analizamos cómo se pueden modelar señales periódicas y calcular su **espectro de frecuencias**, lo que es fundamental para la transmisión de datos en distintos medios, como:
-- **Cables de cobre y fibra óptica** (medios guiados)
-- **Radiofrecuencia y satélites** (medios inalámbricos)
-- **Telefonía y transmisión digital**
+## 📖 Description
+This project implements **Fourier Analysis** for signal representation in the context of **networking and telecommunications**, based on the book *Computer Networks - Tanenbaum (5th Edition)*. Through **Fourier series decomposition**, we analyze how periodic signals can be modeled and calculate their **frequency spectrum**, which is fundamental for data transmission in various media, such as:
+- **Copper cables and fiber optics** (guided media)
+- **Radiofrequency and satellites** (wireless media)
+- **Telephony and digital transmission**
 
-## 🎯 Objetivo
-- Representar **señales digitales** en el dominio del tiempo usando series de Fourier.
-- Calcular y graficar el **espectro de frecuencias** de una señal dada.
-- Ilustrar la importancia de los **armónicos de Fourier** en la reconstrucción de señales.
+## 🎯 Objective
+- Represent **digital signals** in the time domain using Fourier series.
+- Calculate and plot the **frequency spectrum** of a given signal.
+- Illustrate the importance of **Fourier harmonics** in signal reconstruction.
 
-## 🛠 Características del Programa
-- Implementación en **Python** con **SymPy** y **Matplotlib**.
-- Cálculo de coeficientes de Fourier \( a_n \) , \( b_n \) y \( c \). 
-- Representación de señales en el **dominio del tiempo**.
-- Cálculo y graficación del **espectro de frecuencias**.
+## 🛠 Program Features
+- Implementation in **Python** using **SymPy** and **Matplotlib**.
+- Calculation of Fourier coefficients \( a_n \), \( b_n \), and \( c \).
+- Representation of signals in the **time domain**.
+- Calculation and visualization of the **frequency spectrum**.
 
-## 📌 Conceptos Claves
-✔ **Transformada de Fourier** 📊  
-✔ **Espectro de Frecuencias** 📶  
-✔ **Armónicos y Señales Digitales** 🔀  
+## 📌 Key Concepts
+✔ **Fourier Transform** 📊  
+✔ **Frequency Spectrum** 📶  
+✔ **Harmonics and Digital Signals** 🔀  
 
-## 📌 Conceptos Claves
-✔ **Transformada de Fourier** 📊  
-✔ **Espectro de Frecuencias** 📶  
-✔ **Armónicos y Señales Digitales** 🔀  
+## ⚙️ How It Works
+This program utilizes the **Fourier Series** to analyze and represent signals in networking and telecommunications. The main steps are as follows:
 
-## ⚙️ Cómo funciona
-Este programa utiliza la **Serie de Fourier** para analizar y representar señales en redes y telecomunicaciones. A continuación, se describen los pasos principales:
+1. **Definition of Fourier Coefficients**  
+   - The coefficients \( a_n \) and \( b_n \) are calculated from the input signal.
+   - SymPy is used for symbolic operations.
 
-1. **Definición de coeficientes de Fourier**  
-   - Se calculan los coeficientes \( a_n \) y \( b_n \) a partir de la señal de entrada.
-   - Se usa SymPy para realizar las operaciones simbólicas.
+2. **Calculation of the Fourier Series**  
+   - A summation of sine and cosine terms up to a number \( N \) of harmonics is generated.
+   - This allows for the approximation of periodic signals with a finite set of frequencies.
 
-2. **Cálculo de la Serie de Fourier**  
-   - Se genera la sumatoria de términos senoidales y cosenoidales hasta un número \( N \) de armónicos.
-   - Esto permite aproximar señales periódicas con un conjunto finito de frecuencias.
+3. **Evaluation in the Time Domain**  
+   - The function is evaluated at different \( t \) values to reconstruct the signal over time.
+   - The original signal and its Fourier approximation are graphically represented.
 
-3. **Evaluación en el dominio del tiempo**  
-   - Se evalúa la función en distintos valores de \( t \) para reconstruir la señal en el tiempo.
-   - Se representa gráficamente la señal original y su aproximación con Fourier.
+4. **Computation of the Frequency Spectrum**  
+   - The magnitude \( M_n \) of the Fourier coefficients is obtained, indicating the energy at each frequency.
+   - The spectrum is plotted, showing how each harmonic contributes to the signal.
 
-4. **Cálculo del espectro de frecuencias**  
-   - Se obtiene la magnitud \( M_n \) de los coeficientes de Fourier, que indica la energía en cada frecuencia.
-   - Se grafica el espectro, mostrando cómo cada armónico contribuye a la señal.
-
-Este proceso permite visualizar cómo **las redes y los sistemas de telecomunicaciones transmiten señales digitales y analógicas**, y cómo el **ancho de banda limita la transmisión de datos**.
-
+This process enables visualization of how **networking and telecommunications systems transmit digital and analog signals** and how **bandwidth limitations affect data transmission**.
 
 ---
 
 🚀
+

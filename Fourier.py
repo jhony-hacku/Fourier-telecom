@@ -1,67 +1,81 @@
-import sympy as sp
 import numpy as np
 import matplotlib.pyplot as plt
+import pandas as pd
 
-# Definir variables simbólicas
-n = sp.symbols('n', integer=True)
-t = sp.symbols('t', real=True)
+def texto_a_binario(texto):
+    return ''.join(format(ord(c), '08b') for c in texto)  # Convertir texto a binario en una sola cadena
 
-# Definir los coeficientes de Fourier
-a_n_expr = (1 / (sp.pi * n)) * (-sp.cos(sp.pi * n / 2) + sp.cos(sp.pi * n / 4) - sp.cos(7 * sp.pi * n/4) + sp.cos(sp.pi * n))
-b_n_expr = (1 / (sp.pi * n)) * (sp.sin(sp.pi * n / 2) - sp.sin(sp.pi * n / 4) + sp.sin(7 * sp.pi * n/4) - sp.sin(sp.pi * n))
+# Solicitar entrada al usuario
+entrada = input("Ingresa una letra o palabra (case sensitive): ")
+resultado = texto_a_binario(entrada)
 
-# Definir la magnitud M_n
-M_n_expr = sp.sqrt(a_n_expr**2 + b_n_expr**2)
+print(f"Texto: {entrada}")
+print(f"Binario: {resultado}")
 
-# Definir la sumatoria de Fourier y evaluarla con doit()
-max_n = 40  # Número de términos en la sumatoria
-sum_expr = sp.Sum(b_n_expr * sp.cos(2 * sp.pi * n * t) + a_n_expr * sp.sin(2 * sp.pi * n * t), (n, 1, max_n)).doit()
+# --------------------- Configuración de la señal ---------------------
+T_val = 1                    # Periodo normalizado
+num_bits = len(resultado)     # Longitud de la señal en bits
+bit_sequence = [int(b) for b in resultado]  # Convertir la cadena binaria en lista de enteros
+interval_length = T_val / num_bits  # Duración de cada bit
 
-# ----- Cálculo de los coeficientes M_n -----
-n_values = [0]  # Incluir n=0
-M_n_values = [1]  # M_0 = 1
+# --------------------- Discretización de la señal g(t) ---------------------
+num_samples = 1000
+t_values = np.linspace(0, T_val, num_samples)
+g_values = np.array([bit_sequence[min(int(t // interval_length), num_bits-1)] for t in t_values], dtype=float)
 
-for i in range(1, max_n + 1):
-    M_n_val = float(sp.N(M_n_expr.subs(n, i)))  # Convertir a flotante
-    n_values.append(i)
-    M_n_values.append(M_n_val)
+# --------------------- Cálculo NUMÉRICO de coeficientes de Fourier ---------------------
+num_harmonics = int(input("Ingrese el número de armónicos: "))
 
-# ----- Evaluación de la serie de Fourier -----
-t_values = np.arange(0, 1.01, 0.01)
-sum_values = []  # Lista para guardar los valores de la sumatoria
+a_n_values = []
+b_n_values = []
 
-for t_val in t_values:
-    evaluated_expr = sum_expr.subs(t, t_val)  # Sustituir t por el valor actual
-    final = 1/2 + evaluated_expr  # Sumar 1/2
-    sum_values.append(float(final.evalf()))  # Convertir a número decimal y agregar a la lista
+for n in range(1, num_harmonics + 1):
+    a_n = (2 / T_val) * np.trapz(g_values * np.sin(2 * np.pi * n * t_values), t_values)
+    b_n = (2 / T_val) * np.trapz(g_values * np.cos(2 * np.pi * n * t_values), t_values)
+    a_n_values.append(a_n)
+    b_n_values.append(b_n)
 
-# Mostrar resultados individuales para max_n = 40
-print("\nValores individuales:")
-print(f"{'n':<5} {'a_n':<20} {'b_n':<20} {'M_n':<20}")
-print("="*65)
+# Coeficiente c (componente DC)
+c = (1 / T_val) * np.trapz(g_values, t_values)
 
-for i in range(len(n_values)):  
-    print(f"{n_values[i]:<5} {float(sp.N(a_n_expr.subs(n, n_values[i]))):<20.6f} {float(sp.N(b_n_expr.subs(n, n_values[i]))):<20.6f} {M_n_values[i]:<20.6f}")
+# Magnitud del espectro
+magnitude_spectrum = np.sqrt(np.array(a_n_values) ** 2 + np.array(b_n_values) ** 2)
 
-
-print("\n")
-
-# ----- Graficar los coeficientes M_n (sin líneas, solo puntos) -----
-plt.figure(figsize=(8, 5))
-plt.plot(n_values, M_n_values, marker='o', linestyle='', color='r', label=r"$M_n = \sqrt{a_n^2 + b_n^2}$")  # Sin línea
-plt.xlabel("n (Índice de la serie de Fourier)")
-plt.ylabel(r"$M_n$")
-plt.title("Coeficientes de la Serie de Fourier")
-plt.legend()
+# --------------------- Gráfica del espectro ---------------------
+frequencies = np.arange(1, num_harmonics + 1)
+plt.figure(figsize=(10, 4))
+plt.stem(frequencies, magnitude_spectrum, basefmt=" ")
+plt.xlabel("Frecuencia (Hz)")
+plt.ylabel("Magnitud")
+plt.title(f"Espectro de Frecuencias de la señal '{resultado}'")
 plt.grid(True)
 plt.show()
 
-# ----- Graficar la serie de Fourier -----
-plt.figure(figsize=(8, 5))
-plt.plot(t_values, sum_values, label="Serie de Fourier", color='b', linewidth=2)
-plt.xlabel("t")
-plt.ylabel("Valor de la sumatoria")
-plt.title("Aproximación de la Serie de Fourier")
+# --------------------- Reconstrucción de la serie de Fourier ---------------------
+t_eval = np.linspace(0, T_val, num_samples)
+fourier_series = c * np.ones_like(t_eval)
+
+for n in range(1, num_harmonics + 1):
+    fourier_series += a_n_values[n - 1] * np.sin(2 * np.pi * n * t_eval) + b_n_values[n - 1] * np.cos(2 * np.pi * n * t_eval)
+
+# --------------------- Gráfica de la reconstrucción ---------------------
+plt.figure(figsize=(10, 4))
+plt.plot(t_values, g_values, label="Señal original", linestyle='--')
+plt.plot(t_eval, fourier_series, label=f"Reconstrucción con {num_harmonics} armónicos", color='red')
+plt.xlabel("Tiempo (t)")
+plt.ylabel("Amplitud")
 plt.legend()
-plt.grid()
+plt.grid(True)
+plt.title("Comparación señal original vs reconstrucción")
 plt.show()
+
+# --------------------- Tabla de coeficientes ---------------------
+df_coeficientes = pd.DataFrame({
+    "n": np.arange(1, num_harmonics + 1),
+    "a_n": a_n_values,
+    "b_n": b_n_values,
+    "Magnitud": magnitude_spectrum
+})
+
+print("\nCoeficientes calculados:")
+print(df_coeficientes.to_string(index=False))
